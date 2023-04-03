@@ -4,6 +4,7 @@
 <head>
 <script src="jquery-1.10.2.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript" src="website.js"></script>
 <script type="text/javascript" src="game.js"></script>
 <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
@@ -25,7 +26,7 @@
         <input type="username" name="username" placeholder="Enter Username" required>
         <label>Password</label>
         <input type="password" name="password" placeholder="Enter Password" required>
-        <input type="submit" name="submit" value="Login">
+        <input type="submit" name="submit" value="Login" onclick="checkLogin()">
         <div class="remember">
             <div class="login"><div class="Oroption">OR</div></div>
             <div class="signup"> Don't have account? <a href="#">Signup Now</a> </div>

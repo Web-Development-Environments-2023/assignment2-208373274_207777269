@@ -1,25 +1,6 @@
-@font-face {
-	font-family: 'Muli Regular';
-	font-style: normal;
-	font-weight: normal;
-	src: local('Muli Regular'), url('Muli-Regular.woff') format('woff');
-}
-@font-face {
-	font-family: 'Muli Bold';
-	font-style: normal;
-	font-weight: normal;
-	src: local('Muli Bold'), url('Muli-Bold.woff') format('woff');
-}
-@font-face {
-	font-family: 'Muli ExtraBold';
-	font-style: normal;
-	font-weight: normal;
-	src: local('Muli ExtraBold'), url('Muli-ExtraBold.woff') format('woff');
-}
 body {
 	margin: 0;
 	padding: 0;
-	font-family: "Muli Regular";
 }
 body:before {
 	content: '';
@@ -31,7 +12,6 @@ body:before {
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-size: cover;
-	font-family: "Muli Regular";
 }
 .blur {
 	background: rgb(0 0 0 / 20%);
@@ -67,7 +47,6 @@ body:before {
 	color: #fff;
 	text-align: center;
 	text-transform: uppercase;
-	font-family: "Muli Bold";
 }
 .formContent label {
 	margin: 0;
@@ -79,7 +58,7 @@ body:before {
 	width: 100%;
 	margin-bottom: 20px;
 }
-.formContent input[type="text"], .formContent input[type="password"], .formContent input[type="email"] {
+.formContent input[type="text"], .formContent input[type="password"], .formContent input[type="username"] {
 	border: none;
 	border-bottom: 1px solid #fff;
 	background: transparent;
@@ -114,17 +93,14 @@ input[type="checkbox"] {
 }
 .remember span {
 	color: #fff;
-	font-family: 'Muli Regular', "Hoefler Text", "Liberation Serif", Times, "Times New Roman", "serif"
 }
 .remember span a {
 	color: #fff;
-	font-family: 'Muli Regular', "Hoefler Text", "Liberation Serif", Times, "Times New Roman", "serif"
 }
 .login {
 	color: #fff;
 	text-align: center;
 	margin: 20px 0;
-	font-family: 'Muli Regular', sans-serif;
 }
 .Oroption:before {
 	content: "";
@@ -180,12 +156,10 @@ i span {
 	font-weight: 500;
 	letter-spacing: 1px;
 	font-size: 16px;
-	font-family: 'Muli Regular', sans-serif;
 }
 .signup {
 	font-size: 15px;
 	color: white;
-	font-family: 'Muli Regular', sans-serif;
 	text-align: center;
 }
 .signup a {
