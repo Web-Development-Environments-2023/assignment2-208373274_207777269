@@ -2,22 +2,39 @@
 <html>
 
 <head>
-<script src="jquery-1.10.2.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script type="text/javascript" src="game.js"></script>
-<link rel="stylesheet" type="text/css" href="style.css" />
+    <script src="jquery-1.10.2.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="game.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 
 <body>
-<div id="Header">
-    <ul>
-        <li id="WelcomePage"> </li>
+    <div id="menu">
+        <li id="Welcome Page">
+            <button onclick="navigateWelcome()">
+                <img src="Home-icon.svg.png" width="30" height="30">      
+            </button>
+        </li>
         <li></li>
         <li></li>
-      </ul>
-</div>
-<div id="Menu"> </div>
-<div id="Footer"> </div>
+    </div>
+    <div id="content">
+        <div id="welcome">
+            <div id="welcome-logo">
+                
+            </div>
+            <div id="welcome-info">
+                <li>Amit Kravchik, 207777269, <a href="https://web-development-environments-2023.github.io/207777269/">Link to website</a> </li>
+                <li>Yuval Schwartz:</li>
+            </div>
+            <div id="welcome-buttons">
+                <button id="register-button" onclick="navigateRegister()">Register</button>
+                <button id="login-button" onclick="navigateLogin()">Login and play</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="Footer"> </div>
 </body>
 
 </html>
