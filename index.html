@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <script src="jquery-1.10.2.min.js"></script>
+    <!-- <script src="jquery-1.10.2.min.js"></script> -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" src="game.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
@@ -11,17 +11,30 @@
 <body>
     <div id="menu">
         <li id="Welcome Page">
-            <button onclick="navigateWelcome()">
+            <button class="menu-button" onclick="navigateWelcome()">
                 <img src="Home-icon.svg.png" width="30" height="30">      
             </button>
         </li>
-        <li></li>
-        <li></li>
+        <li id="menu-register">
+            <button class="menu-button" onclick="navigateRegister()">
+                Register
+            </button>
+        </li>
+        <li id="menu-login">
+            <button class="menu-button" onclick="navigateRegister()">
+                Login
+            </button>
+        </li>
     </div>
     <div id="content">
-        <div id="welcome">
+        <div id="game">
+            <canvas id = "theCanvas" width = "1000" height = "500"></canvas> 
+            <p><input id = "startButton" type = "button" value = "Start Game"></p>
+        </div>
+
+        <!-- <div id="welcome" class="blur">
             <div id="welcome-logo">
-                
+                <img src="./images/loginPilot.png" class="avatarImg">
             </div>
             <div id="welcome-info">
                 <li>Amit Kravchik, 207777269, <a href="https://web-development-environments-2023.github.io/207777269/">Link to website</a> </li>
@@ -31,24 +44,27 @@
                 <button id="register-button" onclick="navigateRegister()">Register</button>
                 <button id="login-button" onclick="navigateLogin()">Login and play</button>
             </div>
-        </div>
+        </div> -->
+
+
+
+
+        <!-- <div class="formContent blur"> <img src="images/loginPilot.png" class="avatarImg">
+            <h2>Log in</h2>
+            <form>
+                <label>Username</label>
+                <input type="username" name="username" placeholder="Enter Username" required>
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Enter Password" required>
+                <input type="submit" name="submit" value="Login">
+                <div class="remember">
+                    <div class="login"><div class="Oroption">OR</div></div>
+                    <div class="signup"> Don't have account? <a href="#">Signup Now</a> </div>
+                </div>
+                </form>
+        </div> -->
     </div>
 
-    
-<div class="formContent blur"> <img src="images/loginPilot.png" class="avatarImg">
-    <h2>Log in</h2>
-    <form>
-        <label>Username</label>
-        <input type="username" name="username" placeholder="Enter Username" required>
-        <label>Password</label>
-        <input type="password" name="password" placeholder="Enter Password" required>
-        <input type="submit" name="submit" value="Login">
-        <div class="remember">
-            <div class="login"><div class="Oroption">OR</div></div>
-            <div class="signup"> Don't have account? <a href="#">Signup Now</a> </div>
-        </div>
-        </form>
-</div>
 
 <div id="Footer"> </div>
 </body>
