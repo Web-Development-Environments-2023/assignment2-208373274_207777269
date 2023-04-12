@@ -21,6 +21,7 @@ var then;
 
 var canvasWidth; // width of the canvas
 var canvasHeight; // height of the canvas
+var infoBarHeight;
 
 // variables for the Spaceship and the shootings
 var spaceship;
@@ -53,8 +54,9 @@ var spaceshipFireSpeed; // spaceshipFire speed
 
 // variables for the enemy's fire
 var enemyFire; // spaceshipFire image's upper-left corner
+var pastEnemyFire;
 var enemyFireVelocity; // spaceshipFire's velocity
-var senemyFireOnScreen; // is the spaceshipFire on the screen
+var enemyFireOnScreen; // is the spaceshipFire on the screen
 var enemyFireWidth; // spaceshipFire radius
 var enemyFireHeight; // spaceshipFire radius
 var enemyFireSpeed; // spaceshipFire speed
@@ -71,7 +73,12 @@ var spaceshipImage;
 var spaceshipFireImage;
 var enemiesImages;
 var enemyFireImage;
+var lastEnemyFireInterval;
+var livesImages;
+var flatEggImage;
 
+var lifeImageHeight;
+var lifeImageWidth;
 // variables for sounds
 var themeSound;
 var shootSound;
@@ -98,12 +105,13 @@ function setupGame() {
 
    hitStates = new Array(NUMBER_OF_ENEMIES_IN_COLUMN);
    enemies = new Array(NUMBER_OF_ENEMIES_IN_COLUMN);
-   enemyFire = new Array(NUMBER_OF_ENEMIES_IN_COLUMN);
+   enemyFire = new Array();
+   pastEnemyFire = new Array();
+
    for (var i = 0; i < NUMBER_OF_ENEMIES_IN_COLUMN; i++) {
     enemies[i] = new Array(NUMBER_OF_ENEMIES_IN_ROW);
     for (var j = 0; j < NUMBER_OF_ENEMIES_IN_ROW; j++) {
         enemies[i][j] = new Object();
-        enemyFire[i][j] = new Object();
         }
     }
     
@@ -127,11 +135,21 @@ function setupGame() {
      enemiesImages[i] = new Image();
      enemiesImages[i].src = "./images/game/enemy" + i + ".png";
     }
+
+    livesImages = new Array(3);
+    for (var i = 0; i < 3; i++){
+        livesImages[i] = new Image();
+        livesImages[i].src = "./images/game/fullHeart.png";
+    }
+
+    flatEggImage = new Image();
+    flatEggImage.src = "./images/game/flatEgg.png";
+
     
     // get sounds
    themeSound = document.getElementById( "themeSound" );
    shootSound = document.getElementById( "shootSound" );
-    //    hitSound = document.getElementById( "blockerSound" );
+    hitSound = document.getElementById( "hitSound" );
 
     // Handle keyboard controls
     spaceshipFireKey = 32;
@@ -154,6 +172,10 @@ function stopTimer() {
     window.clearInterval(intervalTimer);
 }
 
+function resetSpaceshipPosition(){
+    spaceship.x = 32 + (Math.random() * (canvas.width - 64));
+	spaceship.y = canvas.height - spaceshipHeight;
+}
 // called by function newGame to scale the size of the game elements
 // relative to the size of the canvas before the game begins
 function resetElements() {
@@ -165,21 +187,27 @@ function resetElements() {
     spaceshipWidth = 100;
     spaceshipHeight = 100;
 
-	spaceship.x = 32 + (Math.random() * (canvas.width - 64));
-	spaceship.y = canvas.height - spaceshipHeight;
+    resetSpaceshipPosition();
     spaceship.speed = 300;
     spaceshipFireWidth = 20;
     spaceshipFireHeight = 50;
     spaceshipFireSpeed = w * 3 / 2; // spaceshipFire speed multiplier
 
-    enemyImageWidth = 80;
-    enemyImageHeight = 80;
+    enemyImageWidth = 70;
+    enemyImageHeight = 70;
+    
+    enemyFireSpeed =  1000;
+    enemyFireWidth = 20;
+    enemyFireHeight = 30;
+
+    infoBarHeight = 50;
+    lifeImageWidth = 25;
+    lifeImageHeight = 25;
 
     for (var i = 0; i < NUMBER_OF_ENEMIES_IN_COLUMN; i++) {
         for (var j = 0; j < NUMBER_OF_ENEMIES_IN_ROW; j++) {
-            // console.log(enemiesImages[i]);
-            enemies[i][j].x = j * enemyImageWidth
-            enemies[i][j].y = i * enemyImageHeight
+            enemies[i][j].x = j * enemyImageWidth;
+            enemies[i][j].y = i * enemyImageHeight + infoBarHeight;
         }
       }
     initialEnemyVelocity = -w / 4; // initial target speed multiplier
@@ -202,14 +230,21 @@ function newGame() {
     numberOfDeadEnemies = 0; // no enemies have been hit
     timeLeft = TIME_FOR_A_GAME; // start the countdown at TIME_FOR_A_GAME seconds
     timeElapsed = 0; // set the time elapsed to zero
+    timeLeft = 120; // start the countdown at 2 minutes
+    timerCount = 0; // the timer has fired 0 times so far
     spaceshipFireOnScreen = false;
+    enemyFireOnScreen = false;
     speedIncreaseCounter = 0;
+    score = 0;
+    numberOfPsilot = 0;
     themeSound.play();
     startTimer(); // starts the game loop
 }
 
 // called every TIME_INTERVAL milliseconds
 function updatePositions(modifier) {
+
+
 
     // move spaceship using keyboard
 	if ((38 in keysDown) && spaceship.y > canvas.height * 0.6) { // Player holding up	
@@ -232,6 +267,10 @@ function updatePositions(modifier) {
 		fireSpaceshipShot();
 	}
 
+    if (!enemyFireOnScreen){
+        fireEnemyShot();
+    }
+
     // update the spaceship fire position
     if (spaceshipFireOnScreen) // if there is currently a shot fired
     {
@@ -240,43 +279,25 @@ function updatePositions(modifier) {
  
        spaceshipFire.y -= interval * spaceshipFireSpeed;
 
-       // check for collision with upper wall
-        if (spaceshipFire.y - spaceshipFireHeight < 0)
-        {
-            spaceshipFireOnScreen = false; // make the spaceshipFire disappear
-        } 
-
-        // check for spaceshipFire collision with target
-        else{
-            for (var i = 0; i < NUMBER_OF_ENEMIES_IN_COLUMN; i++) {
-                for (var j = 0; j < NUMBER_OF_ENEMIES_IN_ROW; j++) {
-                    if (hitStates[i][j]){
-                        continue;
-                    }
-                    if ((spaceshipFire.y >= enemies[i][j].y && spaceshipFire.y <= (enemies[i][j].y + enemyImageHeight)) &&
-                        (((spaceshipFire.x + spaceshipFireWidth) <= (enemies[i][j].x + enemyImageWidth) && (spaceshipFire.x + spaceshipFireWidth) >= enemies[i][j].x) ||
-                        (spaceshipFire.x >= enemies[i][j].x && spaceshipFire.x <= (enemies[i][j].x + enemyImageWidth))))
-                    {
-                        hitStates[i][j] = true;
-                        spaceshipFireOnScreen = false;
-                        score += scoresData[i];
-                    }
-
-              }
-            }
-        }   
-
-        //     // if all pieces have been hit
-        //     if (++targetPiecesHit == TARGET_PIECES)
-        //     {
-        //         stopTimer(); // game over so stop the interval timer
-        //         draw(); // draw the game pieces one final time
-        //         showGameOverDialog("You Won!"); // show winning dialog
-        //     } // end if
-        //     } // end if
-        // } // end else if
+       checkSpaceshipFireCollisons();
     }
 
+    // update the enemies fire position
+    if (enemyFireOnScreen) // if there is currently a shot fired
+    {
+        // update spaceshipFire position
+        var interval = TIME_INTERVAL / 1000.0;
+    
+        for (var i = 0; i < enemyFire.length; i++){
+            enemyFire[i].y += interval * enemyFireSpeed;
+        }
+
+        checkEnemyFireCollisons();
+    }
+
+    for (var i = 0; i < pastEnemyFire.length; i++){
+        pastEnemyFire[i].y += interval * enemyFireSpeed;
+    }
     // increase enemey's speed
     if (speedIncreaseCounter < 4){
         // Calculate time since last speed increase
@@ -287,8 +308,11 @@ function updatePositions(modifier) {
         if (timeSinceLastSpeedIncrease >= speedIncreaseInterval) {
             // Increase the enemy velocity and reset the timer
             enemyVelocity *= acceleration; // increase speed by 20%
+            enemyFireSpeed *= acceleration;
             lastSpeedIncreaseTime = currentTime;
             speedIncreaseCounter ++;
+            console.log(speedIncreaseCounter);
+
         }
     }
         
@@ -304,35 +328,160 @@ function updatePositions(modifier) {
    if (enemies[0][0].x < 0 || enemies[NUMBER_OF_ENEMIES_IN_COLUMN - 1][NUMBER_OF_ENEMIES_IN_ROW - 1].x > canvasWidth - 300)
       enemyVelocity *= -1;
 
+
+
 }
 
 // fires a Spaceship shot
 function fireSpaceshipShot(event) {
     if (spaceshipFireOnScreen) // if a spaceshipFire is already on the screen
       return; // do nothing
-      spaceshipFire.x = spaceship.x + (spaceshipWidth / 2) - (spaceshipFireWidth / 2); // align x-coordinate with cannon
-      spaceshipFire.y = spaceship.y; // centers ball vertically
-
+    spaceshipFire.x = spaceship.x + (spaceshipWidth / 2) - (spaceshipFireWidth / 2); // align x-coordinate with cannon
+    spaceshipFire.y = spaceship.y; // centers ball vertically
     spaceshipFireOnScreen = true; // the spaceshipFire is on the screen
-
     // play cannon fired sound
     shootSound.play();
 }
 
 function fireEnemyShot(event) {
-    if (spaceshipFireOnScreen) // if a spaceshipFire is already on the screen
-      return; // do nothing
-      spaceshipFire.x = spaceship.x+5; // align x-coordinate with cannon
-      spaceshipFire.y = spaceship.y; // centers ball vertically
+    // if (enemyFireOnScreen){
+    //     return;
+    // }
+    var randomRowIndex = Math.floor(Math.random() * NUMBER_OF_ENEMIES_IN_COLUMN);
+    var randomColumnIndex = Math.floor(Math.random() * NUMBER_OF_ENEMIES_IN_ROW);
 
-    spaceshipFireOnScreen = true; // the spaceshipFire is on the screen
+    if (hitStates[randomRowIndex][randomColumnIndex]){
+        return;
+    }
+    var x = enemies[randomRowIndex][randomColumnIndex].x + (enemyImageWidth / 2) - (enemyFireWidth / 2);
+    var y = enemies[randomRowIndex][randomColumnIndex].y;
+    enemyFire.push({x: x, y: y});
 
+    enemyFireOnScreen = true; // the spaceshipFire is on the screen
+    lastEnemyFireInterval = Date.now();
     // play cannon fired sound
     // spaceshipFireSound.play();
 }
 
+function checkSpaceshipFireCollisons(){
+    // check for collision with upper wall
+    if (spaceshipFire.y - spaceshipFireHeight < 0)
+    {
+        spaceshipFireOnScreen = false; // make the spaceshipFire disappear
+    } 
+
+    // check for spaceshipFire collision with target
+    else{
+        for (var i = 0; i < NUMBER_OF_ENEMIES_IN_COLUMN; i++) {
+            for (var j = 0; j < NUMBER_OF_ENEMIES_IN_ROW; j++) {
+                if (hitStates[i][j]){
+                    continue;
+                }
+                if ((spaceshipFire.y >= enemies[i][j].y && spaceshipFire.y <= (enemies[i][j].y + enemyImageHeight)) &&
+                    (((spaceshipFire.x + spaceshipFireWidth) <= (enemies[i][j].x + enemyImageWidth) && (spaceshipFire.x + spaceshipFireWidth) >= enemies[i][j].x) ||
+                    (spaceshipFire.x >= enemies[i][j].x && spaceshipFire.x <= (enemies[i][j].x + enemyImageWidth))))
+                {
+                    hitStates[i][j] = true;
+                    spaceshipFireOnScreen = false;
+                    score += scoresData[i];
+                }
+            }
+        }
+    }   
+
+    //     // if all pieces have been hit
+    //     if (++targetPiecesHit == TARGET_PIECES)
+    //     {
+    //         stopTimer(); // game over so stop the interval timer
+    //         draw(); // draw the game pieces one final time
+    //         showGameOverDialog("You Won!"); // show winning dialog
+    //     } // end if
+    //     } // end if
+    // } // end else if
+    
+}
+
+function checkEnemyFireCollisons(){
+
+    // for (var i = 0; i < enemyFire.length; i++){
+
+    //     if (enemyFire[i].y + enemyFireHeight  >= canvasHeight)
+    //     {
+    //         enemyFireOnScreen = false; // make the spaceshipFire disappear
+    //         enemyFire.splice(i, 1);
+    //         i--;
+    //     } 
+    //     else{
+    //         // check for collision with upper wall
+    //         if (enemyFire[i].y + enemyFireHeight  >= canvasHeight * 0.75)
+    //         {
+    //             fireEnemyShot();
+    //         } 
+    //     }
+
+
+    // }
+
+    for (var i = 0; i < enemyFire.length; i++){
+        // check for collision with upper wall
+
+        if (enemyFire[i].y + enemyFireHeight  >= canvasHeight * 0.75)
+        {
+            enemyFireOnScreen = false; // make the spaceshipFire disappear
+            pastEnemyFire.push(enemyFire[i]);
+            enemyFire.splice(i, 1);
+            i--;
+        } 
+        else{
+
+            if ((enemyFire[i].x >= spaceship.x && enemyFire[i].x <= spaceship.x + spaceshipWidth) &&
+                ((enemyFire[i].y + enemyFireHeight  >= spaceship.y) &&
+                (enemyFire[i].y + enemyFireHeight  <= spaceship.y + spaceshipHeight)))
+            {
+                spaceshipGotHit();
+                enemyFireOnScreen = false;
+                enemyFire.splice(i, 1);
+                i--;
+            } 
+        }
+
+    }
+
+    for (var i = 0; i < pastEnemyFire.length; i++){
+        // check for collision with upper wall
+        if (pastEnemyFire[i].y + enemyFireHeight  >= canvasHeight)
+        {     
+            pastEnemyFire.splice(i, 1);
+            i--;
+        } 
+        else{
+            if ((pastEnemyFire[i].x >= spaceship.x && pastEnemyFire[i].x <= spaceship.x + spaceshipWidth) &&
+                ((pastEnemyFire[i].y + enemyFireHeight  >= spaceship.y) &&
+                (pastEnemyFire[i].y + enemyFireHeight  <= spaceship.y + spaceshipHeight)))
+            {
+                spaceshipGotHit()
+                pastEnemyFire.splice(i, 1);
+                i--;
+            } 
+        }
+
+    }
+    
+}
+
+
+function spaceshipGotHit(){
+    hitSound.play();
+    livesImages[numberOfPsilot].src = "./images/game/emptyHeart.png";
+    numberOfPsilot ++;
+    resetSpaceshipPosition();
+}
+
 // draws the game elements to the given Canvas
 function draw() {
+
+    // context.drawImage(livesImages[0], 0, 0, lifeImageWidth, lifeImageHeight);
+
     // canvas.width = canvas.width; // clears the canvas (from W3C docs)
     context.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
     context.drawImage(spaceshipImage, spaceship.x, spaceship.y, spaceshipWidth, spaceshipHeight);
@@ -341,13 +490,21 @@ function draw() {
    if (spaceshipFireOnScreen)
    { 
       context.drawImage(spaceshipFireImage, spaceshipFire.x, spaceshipFire.y, spaceshipFireWidth, spaceshipFireHeight);
+   }
 
-   } // end if
+
+    for (var i = 0; i < enemyFire.length; i++){
+        context.drawImage(enemyFireImage, enemyFire[i].x, enemyFire[i].y, enemyFireWidth, enemyFireHeight);
+    }
+
+    for (var i = 0; i < pastEnemyFire.length; i++){
+        context.drawImage(enemyFireImage, pastEnemyFire[i].x, pastEnemyFire[i].y, enemyFireWidth, enemyFireHeight);
+    }
+
 
    // draw enemies
    for (var i = 0; i < NUMBER_OF_ENEMIES_IN_COLUMN; i++) {
     for (var j = 0; j < NUMBER_OF_ENEMIES_IN_ROW; j++) {
-        // console.log(enemiesImages[i]);
         if (!hitStates[i][j]){
             context.drawImage(
                 enemiesImages[i+1],
@@ -355,10 +512,20 @@ function draw() {
                 enemies[i][j].y,
                 enemyImageWidth,
                 enemyImageHeight
-              );
+            );
         }
     }
   }
+
+    // draw info bar
+    for (var i = 0; i < livesImages.length; i++){
+        context.drawImage(livesImages[i], i * lifeImageWidth, 5, lifeImageWidth, lifeImageHeight);
+    }
+
+    context.font = "24px Arial";
+    context.fillStyle = "white";
+    context.fillText(score, 4 * lifeImageWidth , 25);
+    context.fillText("Time remaining: " + timeLeft, 4 * lifeImageWidth + 40, 25);
 }
 
 // display an alert when the game ends
@@ -368,31 +535,34 @@ function showGameOverDialog(message)
       "\nTotal time: " + timeElapsed + " seconds ");
 }
 
-function updateVelocity() {
-    var counter = 0;
-    var maxIterations = 4;
-    
-    var intervalId = setInterval(function() {
-      counter++;
-      
-      // Update the variable
-      enemyVelocity *= 0.5;
-      
-      // Check if we've reached the maximum number of iterations
-      if (counter >= maxIterations) {
-        clearInterval(intervalId);
-      }
-    }, 5000); // Run every 5 seconds
-  }
-
 // The main game loop
 function main() {
     var now = Date.now();
 	var delta = now - then;
+    lastEnemyFireInterval = Date.now();
+    updateTime();
 	updatePositions(delta / 1000);
-	// updateVelocity();
 	draw();	
 
 	then = now;
 };
+
+function updateTime(){
+    ++timerCount; // increment the timer event counter
+
+    // if one second has passed
+    if (TIME_INTERVAL * timerCount >= 250)
+    {
+       --timeLeft; // decrement the timer
+       ++timeElapsed; // increment the time elapsed
+       timerCount = 0; // reset the count
+    } 
+
+   // if the timer reached zero
+   if (timeLeft <= 0)
+   {
+      stopTimer();
+      showGameOverDialog("You lost"); // show the losing dialog
+   } 
+}
 window.addEventListener("load", setupGame, false);
