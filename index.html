@@ -28,7 +28,11 @@
     </div>
     <div id="content">
         <div id="game">
-            <canvas id = "theCanvas" width = "1000" height = "500"></canvas> 
+            <audio id = "themeSound" preload = "auto">
+                <source src = "sounds/MainTheme.mp3" type = "audio/mpeg"/></audio>
+            <audio id = "shootSound" preload = "auto">
+                <source src = "sounds/shoot.mp3" type = "audio/mpeg"/></audio>
+            <canvas id = "theCanvas" width = "1900" height = "700"></canvas> 
             <p><input id = "startButton" type = "button" value = "Start Game"></p>
         </div>
 
