@@ -87,7 +87,6 @@ body {
 body {
 	margin: 0;
 	padding: 0;
-	font-family: "Muli Regular";
 }
 body:before {
 	content: '';
@@ -99,7 +98,6 @@ body:before {
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-size: cover;
-	font-family: "Muli Regular";
 }
 .blur {
 	background: rgb(0 0 0 / 20%);
@@ -135,7 +133,6 @@ body:before {
 	color: #fff;
 	text-align: center;
 	text-transform: uppercase;
-	font-family: "Muli Bold";
 }
 .formContent label {
 	margin: 0;
@@ -183,17 +180,14 @@ input[type="checkbox"] {
 }
 .remember span {
 	color: #fff;
-	font-family: 'Muli Regular', "Hoefler Text", "Liberation Serif", Times, "Times New Roman", "serif"
 }
 .remember span a {
 	color: #fff;
-	font-family: 'Muli Regular', "Hoefler Text", "Liberation Serif", Times, "Times New Roman", "serif"
 }
 .login {
 	color: #fff;
 	text-align: center;
 	margin: 20px 0;
-	font-family: 'Muli Regular', sans-serif;
 }
 .Oroption:before {
 	content: "";
@@ -249,12 +243,10 @@ i span {
 	font-weight: 500;
 	letter-spacing: 1px;
 	font-size: 16px;
-	font-family: 'Muli Regular', sans-serif;
 }
 .signup {
 	font-size: 15px;
 	color: white;
-	font-family: 'Muli Regular', sans-serif;
 	text-align: center;
 }
 .signup a {

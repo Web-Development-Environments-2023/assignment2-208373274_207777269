@@ -2,72 +2,37 @@
 <html>
 
 <head>
-    <!-- <script src="jquery-1.10.2.min.js"></script> -->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script type="text/javascript" src="game.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css" />
+<script src="jquery-1.10.2.min.js"></script>
+<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
+<script type="text/javascript" src="website.js"></script>
+<script type="text/javascript" src="game.js"></script>
+<link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 
 <body>
-    <div id="menu">
-        <li id="Welcome Page">
-            <button class="menu-button" onclick="navigateWelcome()">
-                <img src="Home-icon.svg.png" width="30" height="30">      
-            </button>
-        </li>
-        <li id="menu-register">
-            <button class="menu-button" onclick="navigateRegister()">
-                Register
-            </button>
-        </li>
-        <li id="menu-login">
-            <button class="menu-button" onclick="navigateRegister()">
-                Login
-            </button>
-        </li>
-    </div>
-    <div id="content">
-        <div id="game">
-            <audio id = "themeSound" preload = "auto">
-                <source src = "sounds/MainTheme.mp3" type = "audio/mpeg"/></audio>
-            <audio id = "shootSound" preload = "auto">
-                <source src = "sounds/shoot.mp3" type = "audio/mpeg"/></audio>
-            <canvas id = "theCanvas" width = "1900" height = "700"></canvas> 
-            <p><input id = "startButton" type = "button" value = "Start Game"></p>
+<div id="Header">
+    <ul>
+        <li id="WelcomePage"> </li>
+        <li></li>
+        <li></li>
+      </ul>
+</div>
+<div id="Menu"> </div>
+
+<div class="formContent blur"> <img src="images/loginPilot.png" class="avatarImg">
+    <h2>Log in</h2>
+    <form>
+        <label>Username</label>
+        <input type="username" name="username" placeholder="Enter Username" required>
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Enter Password" required>
+        <input type="submit" name="submit" value="Login" onclick="checkLogin()">
+        <div class="remember">
+            <div class="login"><div class="Oroption">OR</div></div>
+            <div class="signup"> Don't have account? <a href="#">Signup Now</a> </div>
         </div>
-
-        <!-- <div id="welcome" class="blur">
-            <div id="welcome-logo">
-                <img src="./images/loginPilot.png" class="avatarImg">
-            </div>
-            <div id="welcome-info">
-                <li>Amit Kravchik, 207777269, <a href="https://web-development-environments-2023.github.io/207777269/">Link to website</a> </li>
-                <li>Yuval Schwartz:</li>
-            </div>
-            <div id="welcome-buttons">
-                <button id="register-button" onclick="navigateRegister()">Register</button>
-                <button id="login-button" onclick="navigateLogin()">Login and play</button>
-            </div>
-        </div> -->
-
-
-
-
-        <!-- <div class="formContent blur"> <img src="images/loginPilot.png" class="avatarImg">
-            <h2>Log in</h2>
-            <form>
-                <label>Username</label>
-                <input type="username" name="username" placeholder="Enter Username" required>
-                <label>Password</label>
-                <input type="password" name="password" placeholder="Enter Password" required>
-                <input type="submit" name="submit" value="Login">
-                <div class="remember">
-                    <div class="login"><div class="Oroption">OR</div></div>
-                    <div class="signup"> Don't have account? <a href="#">Signup Now</a> </div>
-                </div>
-                </form>
-        </div> -->
-    </div>
+        </form>
+</div>
 
 
 <div id="Footer"> </div>
