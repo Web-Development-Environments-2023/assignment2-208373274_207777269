@@ -5,79 +5,145 @@
     <!-- <script src="jquery-1.10.2.min.js"></script> -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" src="game.js"></script>
+    <script type="text/javascript" src="website.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap" rel="stylesheet">
+    <title>Chicken Invaders</title>
+    <link rel="icon" href="./images/pilot.jpeg" type="image/x-icon">
+    <!-- <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"> -->
 </head>
 
 <body>
-    <div id="menu">
-        <li id="Welcome Page">
-            <button class="menu-button" onclick="navigateWelcome()">
-                <img src="Home-icon.svg.png" width="30" height="30">      
-            </button>
-        </li>
-        <li id="menu-register">
-            <button class="menu-button" onclick="navigateRegister()">
-                Register
-            </button>
-        </li>
-        <li id="menu-login">
-            <button class="menu-button" onclick="navigateRegister()">
-                Login
-            </button>
-        </li>
+    <div id="menu-container">
+        <div id="menu">
+            <li id="menu-welcome">
+                <button class="menu-button" onclick="showScreen('welcome-screen')">
+                    <img src="./images/white-home-icon.png" width="30" height="30">      
+                </button>
+            </li>
+            <li id="menu-register">
+                <button class="menu-button" onclick="showScreen('register-screen')">
+                    Register
+                </button>
+            </li>
+            <li id="menu-login">
+                <button class="menu-button" onclick="showScreen('login-screen')">
+                    Login
+                </button>
+            </li>
+            <li id="menu-about">
+                <button class="menu-button" onclick="showScreen('login-screen')">
+                    About
+                </button>
+            </li>
+        </div>
+        <div class="container-row-center">
+            <label id="hello-user" class="font"></label>
+            <img src="./images/chicken-invaders-logo.png" width="100" height="30">
+        </div>
     </div>
     <div id="content">
-        <div id="game">
+
+        <div id="welcome-screen" class="formContent blur screen welcome-screen">
+            <div id="welcome-logo">
+                <img src="./images/chicken-invaders-logo.png" width="300" height="100">
+            </div>
+            <div id="welcome-info">
+                <li class="font">Amit Kravchik, 207777269</li>
+                <li class="font">Yuval Schwartz, 208373274 </li>
+            </div>
+            <div id="welcome-buttons">
+                <input type="button" name="submit" value="Sign Up" onclick="showScreen('register-screen')">
+                <input type="button" name="submit" value="Log In and Play!" onclick="showScreen('login-screen')">
+            </div>
+        </div>
+
+        <div id="register-screen" class="formContent blur container-column screen"> 
+            <img src="images/registerPilot.jpg" class="avatarImg">
+            <h2>Register</h2>
+            <form name="registrationForm" class="form">
+                <label>Username</label>
+                <input type="username" name="username" placeholder="Enter Username" required>
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Enter Password" required>
+                <label>Verify Password</label>
+                <input type="password" name="passwordVerify" placeholder="Enter Password" required>
+                <label>First Name</label>
+                <input type="firstName" name="firstName" placeholder="Enter First Name" required>
+                <label>Last Name</label>
+                <input type="lastName" name="lastName" placeholder="Enter Last Name" required>
+                <label>Email</label>
+                <input type="email" name="email" placeholder="Enter Email" required>
+                <label>Birthday</label>
+                <input type="date" name="dateOfBirth" id="dateOfBirth-input" required>
+            </form>
+            <input type="submit" name="submit" value="Register" onclick="validateRegistrationForm()">
+        </div>
+
+        <div id="register-succeed-screen" class="formContent blur container-column screen"> 
+            <h2>Sign Up succeeded!</h2>
+            <input type="submit" name="submit" value="Log In and Play!" onclick="showScreen('login-screen')">
+        </div>
+
+        <div id="login-screen" class="formContent blur screen"> 
+            <img src="images/pilot.jpeg" class="avatarImg">
+            <h2>Log in</h2>
+            <form name="loginForm" class="form">
+                <label>Username</label>
+                <input type="username" name="username" placeholder="Enter Username" required>
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Enter Password" required>
+                <input type="button" name="submit" value="Login" onclick="login()">
+                <div class="remember">
+                    <div class="login"><div class="Oroption">OR</div></div>
+                    <div class="signup"> Don't have account? <a href="#" onclick="showScreen('register-screen')">Signup Now</a> </div>
+                </div>
+                </form>
+        </div>
+
+        <div id="configuration-screen" class="formContent blur screen"> 
+            <img src="images/confPilot.png" class="avatarImg">
+            <h2>configurations</h2>
+            <form name="configurationForm" class="form">
+                <label>Choose a key to shoot with</label>
+                <input type="key" name="key" maxlength="1" placeholder="Press Key" required>
+                <label>Enter game duration (minimum 120 seconds)</label>
+                <input type="timer" name="time" placeholder="Enter Duration in Seconds" required>
+                <label>Choose Weapon</label>
+                <div class="container-row">
+                    <label class="weapon">
+                        <img src="./images/game/spaceshipFire1.png" alt="First Image" width="20">
+                        <input type="radio" name="weapon" value="1" required>
+                      </label>
+                      <label class="weapon">
+                        <img src="./images/game/spaceshipFire2.png" alt="Second Image" width="20">
+                        <input type="radio" name="weapon" value="2" required>
+                      </label>
+                      <label class="weapon">
+                        <img src="./images/game/spaceshipFire3.png" alt="Third Image" width="20" height="">
+                        <input type="radio" name="weapon" value="3" required>
+                      </label>
+                </div>
+                <input type="button" name="submit" value="Start Game" onclick="submitConfigurations()">
+            </form>
+        </div>
+
+        <div id="game-screen" class="screen">
             <audio id = "themeSound" preload = "auto">
                 <source src = "sounds/MainTheme.mp3" type = "audio/mpeg"/></audio>
             <audio id = "shootSound" preload = "auto">
                 <source src = "sounds/shoot.mp3" type = "audio/mpeg"/></audio>
             <audio id = "hitSound" preload = "auto">
                 <source src = "sounds/hit4.wav" type = "audio/mpeg"/></audio>
-            <canvas id = "theCanvas" width = "1900" height = "700"></canvas> 
-            <p><input id = "startButton" type = "button" value = "Start Game"></p>
+            <canvas id = "theCanvas"></canvas> 
         </div>
+    </div>
 
-        <!-- <div id="welcome" class="blur">
-            <div id="welcome-logo">
-                <img src="./images/loginPilot.png" class="avatarImg">
-            </div>
-            <div id="welcome-info">
-                <li>Amit Kravchik, 207777269, <a href="https://web-development-environments-2023.github.io/207777269/">Link to website</a> </li>
-                <li>Yuval Schwartz:</li>
-            </div>
-            <div id="welcome-buttons">
-                <button id="register-button" onclick="navigateRegister()">Register</button>
-                <button id="login-button" onclick="navigateLogin()">Login and play</button>
-            </div>
-        </div> -->
-<!-- 
-        <div class="formContent blur"> <img src="images/loginPilot.png" class="avatarImg">
-            <h2>Log in</h2>
-            <form>
-                <label>Username</label>
-                <input type="username" name="username" placeholder="Enter Username" required>
-                <label>Password</label>
-                <input type="password" name="password" placeholder="Enter Password" required>
-                <input type="submit" name="submit" value="Login" onclick="checkLogin()">
-                <div class="remember">
-                    <div class="login"><div class="Oroption">OR</div></div>
-                    <div class="signup"> Don't have account? <a href="#">Signup Now</a> </div> -->
-
-        <!-- <div class="formContent blur"> <img src="images/loginPilot.png" class="avatarImg">
-            <h2>Log in</h2>
-            <form>
-                <label>Username</label>
-                <input type="username" name="username" placeholder="Enter Username" required>
-                <label>Password</label>
-                <input type="password" name="password" placeholder="Enter Password" required>
-                <input type="submit" name="submit" value="Login">
-                <div class="remember">
-                    <div class="login"><div class="Oroption">OR</div></div>
-                    <div class="signup"> Don't have account? <a href="#">Signup Now</a> </div>
-                </div>
-                </form>
-        </div> -->
+    <div id="end-screen" class="formContent blur screen"> 
+        <h2 id="end-text"></h2>
+        <input type="button" name="submit" value="Start Game" onclick="startGame()">
     </div>
 
 
