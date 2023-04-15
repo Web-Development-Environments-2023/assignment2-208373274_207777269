@@ -11,7 +11,7 @@ var TIME_INTERVAL = 1; // screen refresh interval in milliseconds
 var ENEMIES_ACCELERATION_UNITS = 5;
 var NUMBER_OF_ENEMIES_ACCELERATIONS = 4;
 var ENEMIES_ACCELERATION_TIMER = 5;
-var TIME_FOR_A_GAME = 60;
+var TIME_FOR_A_GAME;
 
 // variables for the game loop and tracking statistics
 var intervalTimer; // holds interval timer
@@ -90,18 +90,20 @@ var lastSpeedIncreaseTime;
 var speedIncreaseCounter;
 var acceleration = 1.2;
 
+
+var isFiring;
 // called when the app first launches
 function setupGame() {
     // stop timer if document unload event occurs
    document.addEventListener( "unload", stopTimer, false );
-   document.getElementById( "startButton" ).addEventListener( 
-    "click", newGame, false );
    // get the canvas, its context and setup its click event handler
    canvas = document.getElementById( "theCanvas" );
    context = canvas.getContext("2d");
+   canvas.width = window.innerWidth - 10;
+   canvas.height = window.innerHeight - 70;
 
    spaceship = new Object();
-   spaceshipFire = new Object();
+   spaceshipFire = new Array();
 
    hitStates = new Array(NUMBER_OF_ENEMIES_IN_COLUMN);
    enemies = new Array(NUMBER_OF_ENEMIES_IN_COLUMN);
@@ -119,7 +121,7 @@ function setupGame() {
 
    	// Images
 	bgImage = new Image();
-	bgImage.src = "./images/game/space-background2.jpg";
+	bgImage.src = "./images/game/space-background4.jpg";
 	
 	spaceshipImage = new Image();
 	spaceshipImage.src = "./images/game/player.png";
@@ -152,12 +154,12 @@ function setupGame() {
     hitSound = document.getElementById( "hitSound" );
 
     // Handle keyboard controls
-    spaceshipFireKey = 32;
 	keysDown = {};
 
 	// Check for keys pressed where key represents the keycode captured
 	addEventListener("keydown", function (e) {keysDown[e.keyCode] = true;}, false);
 	addEventListener("keyup", function (e) {delete keysDown[e.keyCode];}, false);
+
 }
 
 // set up interval timer to update game
@@ -190,7 +192,7 @@ function resetElements() {
     resetSpaceshipPosition();
     spaceship.speed = 300;
     spaceshipFireWidth = 20;
-    spaceshipFireHeight = 50;
+    spaceshipFireHeight = 40;
     spaceshipFireSpeed = w * 3 / 2; // spaceshipFire speed multiplier
 
     enemyImageWidth = 70;
@@ -226,11 +228,31 @@ function newGame() {
             hitStates[i][j] = false;
         }
     }
+    // Add an event listener for the keydown event
+    document.addEventListener("keydown", function(event) {
+        // Check if the fire key is pressed
+        if (event.keyCode == spaceshipFireKey) {
+        // If the fire key is not already pressed, fire a new bullet and set the flag to true
+        if (!isFiring) {
+            fireSpaceshipShot();
+            isFiring = true;
+        }
+        }
+    });
+
+    // Add an event listener for the keyup event
+    document.addEventListener("keyup", function(event) {
+        // Check if the fire key is released
+        if (event.keyCode == spaceshipFireKey) {
+        // Reset the flag to false
+        isFiring = false;
+        }
+    });
     enemyVelocity = initialEnemyVelocity; // set initial velocity
     numberOfDeadEnemies = 0; // no enemies have been hit
     timeLeft = TIME_FOR_A_GAME; // start the countdown at TIME_FOR_A_GAME seconds
     timeElapsed = 0; // set the time elapsed to zero
-    timeLeft = 120; // start the countdown at 2 minutes
+    timeLeft = TIME_FOR_A_GAME; // start the countdown at 2 minutes
     timerCount = 0; // the timer has fired 0 times so far
     spaceshipFireOnScreen = false;
     enemyFireOnScreen = false;
@@ -243,9 +265,6 @@ function newGame() {
 
 // called every TIME_INTERVAL milliseconds
 function updatePositions(modifier) {
-
-
-
     // move spaceship using keyboard
 	if ((38 in keysDown) && spaceship.y > canvas.height * 0.6) { // Player holding up	
         spaceship.y -= spaceship.speed * modifier;
@@ -263,24 +282,24 @@ function updatePositions(modifier) {
 	}
 
     // shoot spaceship fire
-    if (spaceshipFireKey in keysDown) { // Player holding right	
-		fireSpaceshipShot();
-	}
 
     if (!enemyFireOnScreen){
         fireEnemyShot();
     }
 
     // update the spaceship fire position
-    if (spaceshipFireOnScreen) // if there is currently a shot fired
-    {
-       // update spaceshipFire position
-       var interval = TIME_INTERVAL / 1000.0;
+    // for (var i = 0; i < spaceshipFire.length; i++)  // if there is currently a shot fired
+    // {
+    //    // update spaceshipFire position
+    //    var interval = TIME_INTERVAL / 1000.0;
  
-       spaceshipFire.y -= interval * spaceshipFireSpeed;
+    //    spaceshipFire[i].y -= interval * spaceshipFireSpeed;
 
-       checkSpaceshipFireCollisons();
-    }
+    //    if (checkSpaceshipFireCollisons(spaceshipFire[i], i)){
+    //         i--;
+    //    }
+    // }
+    checkSpaceshipFireCollisons();
 
     // update the enemies fire position
     if (enemyFireOnScreen) // if there is currently a shot fired
@@ -334,11 +353,13 @@ function updatePositions(modifier) {
 
 // fires a Spaceship shot
 function fireSpaceshipShot(event) {
-    if (spaceshipFireOnScreen) // if a spaceshipFire is already on the screen
-      return; // do nothing
-    spaceshipFire.x = spaceship.x + (spaceshipWidth / 2) - (spaceshipFireWidth / 2); // align x-coordinate with cannon
-    spaceshipFire.y = spaceship.y; // centers ball vertically
-    spaceshipFireOnScreen = true; // the spaceshipFire is on the screen
+    var bullet = {
+        x: spaceship.x + (spaceshipWidth / 2) - (spaceshipFireWidth / 2),
+        y: spaceship.y,
+      };
+      
+      // Add the bullet to the array of bullets
+      spaceshipFire.push(bullet);
     // play cannon fired sound
     shootSound.play();
 }
@@ -364,30 +385,50 @@ function fireEnemyShot(event) {
 }
 
 function checkSpaceshipFireCollisons(){
-    // check for collision with upper wall
-    if (spaceshipFire.y - spaceshipFireHeight < 0)
-    {
-        spaceshipFireOnScreen = false; // make the spaceshipFire disappear
-    } 
 
-    // check for spaceshipFire collision with target
-    else{
-        for (var i = 0; i < NUMBER_OF_ENEMIES_IN_COLUMN; i++) {
-            for (var j = 0; j < NUMBER_OF_ENEMIES_IN_ROW; j++) {
-                if (hitStates[i][j]){
-                    continue;
-                }
-                if ((spaceshipFire.y >= enemies[i][j].y && spaceshipFire.y <= (enemies[i][j].y + enemyImageHeight)) &&
-                    (((spaceshipFire.x + spaceshipFireWidth) <= (enemies[i][j].x + enemyImageWidth) && (spaceshipFire.x + spaceshipFireWidth) >= enemies[i][j].x) ||
-                    (spaceshipFire.x >= enemies[i][j].x && spaceshipFire.x <= (enemies[i][j].x + enemyImageWidth))))
-                {
-                    hitStates[i][j] = true;
-                    spaceshipFireOnScreen = false;
-                    score += scoresData[i];
-                }
-            }
-        }
-    }   
+    for (var k = 0; k < spaceshipFire.length; k++)  // if there is currently a shot fired
+    {
+       // update spaceshipFire position
+       var interval = TIME_INTERVAL / 1000.0;
+ 
+       spaceshipFire[k].y -= interval * spaceshipFireSpeed;
+
+
+       if (spaceshipFire[k].y - spaceshipFireHeight < 0)
+       {
+           spaceshipFire.splice(k, 1);
+           k--;
+           continue;
+       } 
+   
+       // check for spaceshipFire collision with target
+       else{
+           for (var i = 0; i < NUMBER_OF_ENEMIES_IN_COLUMN; i++) {
+               for (var j = 0; j < NUMBER_OF_ENEMIES_IN_ROW; j++) {
+                   if (hitStates[i][j]){
+                       continue;
+                   }
+                   if ((spaceshipFire[k].y >= enemies[i][j].y && spaceshipFire[k].y <= (enemies[i][j].y + enemyImageHeight)) &&
+                       (((spaceshipFire[k].x + spaceshipFireWidth) <= (enemies[i][j].x + enemyImageWidth) && (spaceshipFire[k].x + spaceshipFireWidth) >= enemies[i][j].x) ||
+                       (spaceshipFire[k].x >= enemies[i][j].x && spaceshipFire[k].x <= (enemies[i][j].x + enemyImageWidth))))
+                   {
+
+                       hitStates[i][j] = true;
+                       spaceshipFire.splice(k, 1);
+                       k--;
+                       score += scoresData[i];
+                       if (++numberOfDeadEnemies == NUMBER_OF_ENEMIES)
+                           {
+                               gameOver("Champion!");
+
+                            //    draw(); // draw the game pieces one final time
+                           } 
+                   }
+               }
+           }
+       }   
+    }
+    // check for collision with upper wall
 
     //     // if all pieces have been hit
     //     if (++targetPiecesHit == TARGET_PIECES)
@@ -400,6 +441,7 @@ function checkSpaceshipFireCollisons(){
     // } // end else if
     
 }
+
 
 function checkEnemyFireCollisons(){
 
@@ -431,6 +473,7 @@ function checkEnemyFireCollisons(){
             pastEnemyFire.push(enemyFire[i]);
             enemyFire.splice(i, 1);
             i--;
+            continue;
         } 
         else{
 
@@ -471,10 +514,15 @@ function checkEnemyFireCollisons(){
 
 
 function spaceshipGotHit(){
-    hitSound.play();
-    livesImages[numberOfPsilot].src = "./images/game/emptyHeart.png";
-    numberOfPsilot ++;
-    resetSpaceshipPosition();
+    if (numberOfPsilot < 2){
+        hitSound.play();
+        livesImages[numberOfPsilot].src = "./images/game/emptyHeart.png";
+        numberOfPsilot ++;
+        resetSpaceshipPosition();
+    }
+    else{
+        gameOver("You Lost!")
+    }
 }
 
 // draws the game elements to the given Canvas
@@ -487,9 +535,8 @@ function draw() {
     context.drawImage(spaceshipImage, spaceship.x, spaceship.y, spaceshipWidth, spaceshipHeight);
 
     // if a spaceshipFire is currently on the screen, draw it
-   if (spaceshipFireOnScreen)
-   { 
-      context.drawImage(spaceshipFireImage, spaceshipFire.x, spaceshipFire.y, spaceshipFireWidth, spaceshipFireHeight);
+    for (var i = 0; i < spaceshipFire.length; i++){
+      context.drawImage(spaceshipFireImage, spaceshipFire[i].x, spaceshipFire[i].y, spaceshipFireWidth, spaceshipFireHeight);
    }
 
 
@@ -528,13 +575,6 @@ function draw() {
     context.fillText("Time remaining: " + timeLeft, 4 * lifeImageWidth + 40, 25);
 }
 
-// display an alert when the game ends
-function showGameOverDialog(message)
-{
-   alert(message + "\nShots fired: " + shotsFired + 
-      "\nTotal time: " + timeElapsed + " seconds ");
-}
-
 // The main game loop
 function main() {
     var now = Date.now();
@@ -561,8 +601,43 @@ function updateTime(){
    // if the timer reached zero
    if (timeLeft <= 0)
    {
-      stopTimer();
-      showGameOverDialog("You lost"); // show the losing dialog
+        if (score < 100){
+            gameOver("You Can Do Better... Your score is: " + score)
+        }
+        else{
+            gameOver("Winner!")
+        }
    } 
 }
-window.addEventListener("load", setupGame, false);
+// window.addEventListener("load", setupGame, false);
+
+  
+function submitConfigurations(){
+    let key = document.forms["configurationForm"]["key"].value;
+    let timeDuration = document.forms["configurationForm"]["time"].value;
+    let weapon = document.forms["configurationForm"]["weapon"].value;
+    
+    if (key == "" || timeDuration == "" || weapon == "") {
+        alert("All fields must be filled out");
+        return false;
+    }
+    setupGame();
+    spaceshipFireKey = key.charCodeAt(0);
+    TIME_FOR_A_GAME = timeDuration;
+    spaceshipFireImage.src = "./images/game/spaceshipFire" + weapon + ".png"
+    startGame();
+}
+function startGame(){
+    showScreen("game-screen");
+    newGame();
+}
+
+function gameOver(text){
+    themeSound.pause();
+    themeSound.currentTime = 0;
+    themeSound.load();
+    stopTimer(); // game over so stop the interval timer
+    showScreen("end-screen")
+    document.getElementById("end-text").innerHTML = text;
+    loggedUser
+}
