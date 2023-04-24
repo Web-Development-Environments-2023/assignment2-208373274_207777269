@@ -1,14 +1,12 @@
-body {
+/* body {
     display: flex;
     flex-direction: row;
     height: 100vh;
-    background-color: rgb(36, 37, 39);
 	background-image: url("images/background3.jpg");
-    /* background-image: url('./Fast-spaceship.jpg');
     background-size: cover; 
     background-repeat: no-repeat; 
-    background-position: center center;  */
-}
+    background-position: center center;  
+} */
 
 #menu
 {
@@ -89,12 +87,20 @@ body {
 
 }
 
-body {
+
+.body {
 	margin: 0;
 	padding: 0;
 	font-family: 'Open Sans', sans-serif;
+	display: flex;
+	flex-direction: row;
+	height: 100vh;
+	background-image: url("images/background3.jpg");
+	background-size: cover; 
+	background-repeat: no-repeat; 
+	background-position: center center;  
 }
-body:before {
+.body:before {
 	content: '';
 	position: fixed;
 	width: 100vw;
@@ -104,6 +110,19 @@ body:before {
 	background-attachment: fixed;
 	background-size: cover;
 }
+
+.body-game {
+	margin: 0;
+	padding: 0;
+	font-family: 'Open Sans', sans-serif;
+	content: '';
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgb(36, 37, 39);
+	display: flex;
+	flex-direction: row;
+	}
 .blur {
 	background: rgb(0 0 0 / 20%);
 	backdrop-filter: blur(6px);
@@ -111,13 +130,13 @@ body:before {
 	width: 100%;
 }
 .formContent {
-	position: absolute;
+	position: relative;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 	width: 400px;
 	height: 550px;
-	padding: 80px 40px;
+	padding: 80px 40px 20px 40px;
 	box-sizing: border-box;
 	background: rgb(255 255 255 / 11%);
 	box-shadow: -1px 4px 28px 0px rgba(0,0,0,0.75);
@@ -129,6 +148,15 @@ body:before {
 	width: 80px;
 	height: 80px;
 	border-radius: 50%;
+	overflow: hidden;
+	top: calc(-80px/2);
+	left: calc(50% - 40px);
+}
+
+.avatarImgSquared {
+	position: absolute;
+	width: 80px;
+	height: auto;
 	overflow: hidden;
 	top: calc(-80px/2);
 	left: calc(50% - 40px);
@@ -175,7 +203,7 @@ body:before {
 }
 .formContent input[type="submit"]:hover, .formContent input[type="button"]:hover{
 	color: #fff;
-	background: #104e99;
+	background: rgb(30 32 37);
 }
 .formContent a {
 	color: #fff;
@@ -197,18 +225,18 @@ input[type="checkbox"] {
 	text-align: center;
 	margin: 20px 0;
 }
-.Oroption:before {
+.Oroption-before {
 	content: "";
     display: block;
     width: 115px;
     height: 1px;
     background: #e8e8e8;
     left: 0;
-    position: absolute;
+    /* position: absolute; */
     left: 15%;
     margin-top: 10px;
 }
-.Oroption:after {
+.Oroption-after {
 	content: "";
     display: block;
     width: 115px;
@@ -216,7 +244,7 @@ input[type="checkbox"] {
     background: #e8e8e8;
     right: 58px;
     /* top: 50%; */
-    position: absolute;
+    /* position: absolute; */
     margin-top: -10px;
 }
 .links {
@@ -258,6 +286,7 @@ i span {
 .form{
 	overflow-y: auto;
 	overflow-x: hidden;
+	padding-right: 10px;
 }
 
 .container-column{
@@ -297,4 +326,105 @@ i span {
 	padding: 0;
 	font-weight: bold;
 	color: #fff;
+}
+
+.bold {
+    color: #58c260;
+  }
+
+  .modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.4);
+  }
+  
+  .modal-content {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%;
+	max-width: 600px;
+	position: relative;
+  }
+  
+  .close {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+	cursor: pointer;
+  }
+  
+  .close:hover,
+  .close:focus {
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+  }
+
+  .footer {
+	width: 100%;
+	background-color: rgb(30 32 37);
+	color: white;
+	text-align: center;
+  }
+
+  .footer ul{
+	list-style-type: none;
+  }
+
+
+.form::-webkit-scrollbar {
+	width: 12px;
+}
+
+.form::-webkit-scrollbar-track {
+	border-radius: 8px;
+	background-color: #e7e7e7;
+	border: 1px solid #cacaca;
+	box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+}
+
+.form::-webkit-scrollbar-thumb {
+	border-radius: 8px;
+	background-color: #363636;
+}
+
+
+.new-game-button{
+	display: block;
+    margin: 0 auto;
+    text-align: center;
+    background-color: #d8d8d8;
+    border-radius: 50px;
+    border: white;
+    height: 35px;
+    font-size: inherit;
+}
+
+.menu-new-game-button:hover {
+	background-color: rgb(108, 111, 115);
+  }
+
+.scroll::-webkit-scrollbar {
+	width: 12px;
+}
+
+.scroll::-webkit-scrollbar-track {
+	border-radius: 8px;
+	background-color: #e7e7e7;
+	border: 1px solid #cacaca;
+	box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+}
+
+.scroll::-webkit-scrollbar-thumb {
+	border-radius: 8px;
+	background-color: #363636;
 }

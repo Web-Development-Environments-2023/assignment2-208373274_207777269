@@ -1,36 +1,79 @@
 let loggedUser;
+let shootKey;
 window.addEventListener("load", init, false);
+
 
 function init(){
   showScreen("welcome-screen");
-  if (loggedUser != undefined){
-    document.getElementById("hello-user").innerHTML = "Hello, " + loggedUser;
-  }
-}
-// Show the welcome screen by default
-// window.addEventListener("load", showScreen("welcome-screen"), false);
 
-  function showScreen(screenId) {
-    console.log(screenId);
-    const screens = document.querySelectorAll(".screen");
-    screens.forEach(screen => {
-      if (screen.id === screenId) {
-        if (screenId == "register-screen" || screenId == "welcome-screen"){
-          screen.style.display = "flex";
-        }
-        else{
-          screen.style.display = "block";
-        }
-      } else {
-        screen.style.display = "none";
-      }
+  const inputField = document.getElementById('shoot-key');
+
+  inputField.addEventListener('keydown', event => {
+    shootKey = event.keyCode || event.which;
+  });
+  const modal = document.getElementById("modal");
+  const openBtn = document.getElementById("open-modal");
+  const closeBtn = document.getElementsByClassName("close")[0];
+
+  // Open modal
+  openBtn.addEventListener("click", () => {
+    modal.style.display = "block";
+  });
+
+  // Close modal when user clicks on close button
+  closeBtn.addEventListener("click", () => {
+    modal.style.display = "none";
+  });
+
+  // Close modal when user clicks outside the modal
+  window.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  });
+
+  // Close modal when user presses the escape key
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      modal.style.display = "none";
+    }
+  });
+
+    const newGameButton = document.querySelector('.new-game-button');
+
+    newGameButton.addEventListener('click', () => {
+    // Perform button click action here
+
+    // Remove focus from the button
+    newGameButton.blur();
     });
-  }
-// Set up event listeners for the navigation menu
-// document.getElementById("login-link").addEventListener("click", showLoginScreen);
-// document.getElementById("menu-link").addEventListener("click", showMenuScreen);
-// document.getElementById("game-link").addEventListener("click", showGameScreen);
+}
 
+function showScreen(screenId) {
+  const screens = document.querySelectorAll(".screen");
+  screens.forEach(screen => {
+    if (screen.id === screenId) {
+      if (screenId == "register-screen" || screenId == "welcome-screen" || screenId=="configuration-screen" || screenId=="end-screen" || screenId=="login-screen"){
+        screen.style.display = "flex";
+      }
+
+      else{
+        screen.style.display = "block";
+      }
+      
+    } else {
+      screen.style.display = "none";
+    }
+    if (screenId == "game-screen"){
+      document.getElementById('footer').style.display = "none";
+      document.getElementById('body').classList = "container-column body-game"
+    }
+    else{
+        document.getElementById('footer').style.display = "block";
+        document.getElementById('body').classList = "container-column body"
+    }
+  });
+}
 
 function validateRegistrationForm() {
     let user = {
@@ -88,6 +131,12 @@ function validateRegistrationForm() {
     var birthdayDate = new Date(dateOfBirth);
     if (birthdayDate > today) {
       alert("Birthday must be in the past");
+      return;
+    }
+
+    let userDataJson = localStorage.getItem(username);
+    if (userDataJson != null){
+      alert("This username is already taken!");
       return;
     }
   
