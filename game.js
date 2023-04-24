@@ -170,8 +170,7 @@ function setupGame() {
     // Select all buttons with the class "stop-button"
     
     stopButtons = document.querySelectorAll('.stop-button');
-    console.log(stopButtons);
-    // Loop through each button and attach the event listener
+     // Loop through each button and attach the event listener
     stopButtons.forEach(button => {
     button.addEventListener('click', stopGameLoop);
     });

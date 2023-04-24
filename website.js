@@ -112,8 +112,6 @@ function validateRegistrationForm() {
     var email = document.forms["registrationForm"]["email"].value;
     var dateOfBirth = document.forms["registrationForm"]["dateOfBirth"].value;
   
-    console.log("p1:" , password)
-    console.log("p2:" , passwordVerify)
     // Check that all fields are filled
     if (username == "" || password == "" || passwordVerify == "" || firstName == "" || lastName == "" || email == "" || dateOfBirth == "") {
       alert("All fields must be filled out");
@@ -179,8 +177,6 @@ function validateRegistrationForm() {
     // Save the JSON string to local storage
     localStorage.setItem(user.username, userJson);
 
-    console.log("User data saved to local storage");
-
     showScreen('register-succeed-screen');
   }
 
@@ -192,7 +188,6 @@ function login(){
   // Retrieve the user data from local storage using the username as the key
   let userDataJson = localStorage.getItem(username);
 
-  console.log(userDataJson);
   if (userDataJson == null){
     alert("Username doesn't exist!")
     return false;
