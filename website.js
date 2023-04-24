@@ -47,6 +47,27 @@ function init(){
     // Remove focus from the button
     newGameButton.blur();
     });
+
+
+    let user = {
+      username: "p",
+      password: "testuser",
+      firstName: "",
+      lastName: "",
+      email: "",
+      dateOfBirth: ""
+    };
+
+      // Create a JSON object with the username as the key and the user object as the value
+      let userData = {};
+      userData[user.username] = user;
+  
+      // Use JavaScript to write the JSON object to a file
+      // Convert the user object to a JSON string
+      let userJson = JSON.stringify(user);
+  
+      // Save the JSON string to local storage
+      localStorage.setItem(user.username, userJson);
 }
 
 function showScreen(screenId) {
